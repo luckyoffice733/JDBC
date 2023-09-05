@@ -1,0 +1,1913 @@
+What is API?
+
+API (Application programming interface) is a document that contains a description of all the 
+features of a product or software. 
+
+It represents classes and interfaces that software programs can follow to 
+communicate with each other. 
+
+An API can be created for applications, libraries, operating systems,database etc.
+
+
+JDBC API --> It is a specification or guidelines to develop a java class to 
+interact with database.
+
+
+Database Vendors provide implementation for JDBC API and 
+they given in the form .jar file (driver)
+
+Ex:
+--
+oracle --> ojdbc.jar
+
+mysql  --> mysql-connector-java-XXX.jar
+
+JDBC:
+=====
+JDBC stands for Java Database Connectivity. 
+
+JDBC is a Java API to connect and execute the query with the database. 
+
+JDBC API uses JDBC drivers to connect with the database. 
+
+There are four types of JDBC drivers:
+=====================================
+1. JDBC-ODBC Bridge Driver
+2. Native Driver
+3. Network Protocol Driver
+4. Thin Driver---(pure java driver)
+
+JDBC API:
+========
+java.sql.*
+
+Interfaces:
+----------
+Driver
+Connection
+Statement
+PreparedStatement
+CallableStatement
+ResultSet
+
+Classes:
+--------
+DriverManager
+Types
+
+
+Steps to develop a java program to interact with database:
+==========================================================
+
+1)Load or register the driver class
+==================================
+we can register driver using
+
+Class.forName("specify driver className");
+
+Ex:
+===
+
+mysql:
+=====
+Class.forName("com.mysql.jdbc.Driver"); --->up to mysql version 5.0
+
+Class.forName("com.mysql.cj.jdbc.Driver"); -->for mysql version 8.0 onwards.
+
+oracle:
+=======
+Class.forName("oracle.jdbc.driver.OracleDriver");-->oracle database.
+
+
+2)Define the Connection Url(where exactly database is installed) for the database.
+
+Ex:
+===
+Mysql:
+------
+syntax:
+-------
+jdbc:mysql://localhost:portno/databaseName
+Ex:
+---
+jdbc:mysql://localhost:3306/training
+
+oracle:
+=======
+jdbc:oracle:thin:@localhost:1521:xe 
+
+
+3)Establish the connection between java class and database using DriverManager class.
+
+Ex:
+---
+Connection con= DriverManager.getConnection(String url,String user,String password);
+
+mysql:
+======
+Connection con= DriverManager.getConnection("jdbc:mysql://localhost:3306/training","root","root");
+
+
+4)Create the object for Statement or PreparedStatement or Callable Statement
+    using Connection object to execute the queries.
+Ex:
+===
+
+Statement stmt = con.createStatement();
+
+or
+
+PreparedStatement pstmt = con.preparedStatement(String sql);
+
+
+5)Execute the Sql queries:
+==========================
+
+By using Statement or PreparedStatement Object we can call these methods.
+
+1) boolean execute() --> we can execute select and non-select(insert,update,delete) queries.
+
+2) int executeUpdate() --> we can execute only non-select(insert,update,delete) queries.
+
+3) ResultSet executeQuery() --> we can execute only select quereies(select * from tablename [where]);
+
+
+6)Close the objects:
+====================
+
+1)close Statement or PreparedStatement object
+2) close the connection Object.
+
+
+
+MYSQL:
+-----
+1)Write a jdbc code to insert a record into employee table(empno,ename,sal)using Statement Object?
+
+sol:-
+-----
+a) create table employee(empno int,ename varchar(10),sal decimal(10,2));
+
+b) download mysql connector jar from maven respository and add this jar to your project buildpath
+   note:- buildpath->configurebuildpath->libraries tab->click on add external jar files button.
+
+c)
+package com.training.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class ExampleOnInsertUsingStatementObject1 {
+
+	public static void main(String[] args) {
+		
+		try {
+			//load or register the driver
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			
+			//define the connection url for mysql database;
+			String url="jdbc:mysql://localhost:3306/ust";
+			String userName="root";
+			String password="root";
+			
+			//establish the connection between the java class and database
+			Connection con =DriverManager.getConnection(url,userName,password);
+	
+			//creating statment object using con
+			Statement stmtObj=con.createStatement();
+			
+			//Execute the Queries
+			String query="insert into employee values(1001,'smith',3000)";
+			
+			int iobj=stmtObj.executeUpdate(query);
+			
+			if(iobj>0) {
+				System.out.println("Record is inserted Successfully");
+			}else {
+				System.out.println("Record is Not Inserted ");
+			}
+						
+			//close the objects
+			stmtObj.close();
+			con.close();
+			
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+	}
+
+}
+
+
+Example:
+========
+
+Write a jdbc code to insert the records into customer(id,name,addresss) table in cts database using statement.
+
+sol:
+===
+create the table in cts database
+
+a) create table customer(id int,name varchar(10),address varchar(10));
+
+
+sol:
+----
+public class ExampleOnInsert {
+
+	public static void main(String[] args) throws ClassNotFoundException, SQLException {
+		
+		//load or register the Driver
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		
+		//Define connection url,username,password	
+		String url="jdbc:mysql://localhost:3306/ust";
+		String user="root";
+		String password="root";
+		
+		//establish the connection between java program to database.
+	     Connection con =DriverManager.getConnection(url, user, password);
+		 System.out.println(con);
+		
+		//create statement object to execute insert query
+		 
+		 Statement stmtObj =con.createStatement();
+		
+		 //execute the query
+		 String queryString="insert into customer values (1002,'martin','NewYork')";
+		 
+		 int r =stmtObj.executeUpdate(queryString);
+		 
+		 System.out.println("no of recoreds inserted is : "+r);
+		 
+		 if(r>0) {
+			 System.out.println("Row has been successfully inserted...!");
+		 }
+		 
+		 //close the objects
+		 
+		 stmtObj.close();
+		 con.close();
+}
+}
+
+Note:
+-----
+
+using Statement:
+=================
+
+Statement stmtObj =con.createStatement();
+		
+//execute the query
+		 
+String queryString="insert into employee values (1002,'martin',3000)";
+		 
+int r =stmtObj.executeUpdate(queryString);
+
+
+
+Using PreparedStatement:
+========================
+
+String queryString="insert into employee values(?,?,?)";
+
+note:
+-----
+? ---> indicates Positional parameter 
+
+PreparedStatement pstmt = con.prepareStatement(queryString);
+
+
+//pass the value for the positional parameters using PreparedStatement object with setXXX(int position,String value);
+note:
+====
+positional parameter index start with  1.....
+
+Based on the table column datatype we need to use setXXX methods.
+
+Ex:
+------ 
+                   
+empno      | int(11)      =====>		setInt(1,1004)				setString(1,"1004")
+ename    | varchar(10)  =======>         setString(2,"rakesh")        or         setString(2,"rakesk")
+sal     | varchar(10)  ======>          setFloat(3,3000")              setString(3,3000)
+
+
+//execute the query
+
+int r =pstmt.executeUpdate();
+
+
+Ex:
+====
+Write a jdbc code to insert the records into customer(id,name,addresss) table in ust database using 
+PreparedStatement.
+
+a)Create table customer(id int,name varchar(10),address varchar(10)):
+
+sol:
+====
+package com.training.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class ExampleOnInsertUsingPreparedStatement1 {
+	
+	public static void main(String[] args) {
+
+		//load or register the driver
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			//define the connection url for mysql database;
+			String url="jdbc:mysql://localhost:3306/ust";
+			String userName="root";
+			String password="root";
+			
+			//establish the connection between the java class and database
+			Connection con =DriverManager.getConnection(url,userName,password);
+			
+			//creating PreparedStatment Object using con
+			String query="insert into customer values(?,?,?)";
+			
+			PreparedStatement pstmt=con.prepareStatement(query);
+			
+			pstmt.setInt(1,8675);
+			pstmt.setString(2,"venkat");
+			pstmt.setString(3,"newyork");
+			
+			int iobj=pstmt.executeUpdate();
+			
+			if(iobj>0) {
+				System.out.println("Record is inserted using PreparedStatement");
+			}else {
+				System.out.println("Record is not inserted");
+			}
+			
+			pstmt.close();
+			con.close();
+						
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+}
+
+Example:
+========
+Create table named item(itemid,itemname,price) :- create table item(itemId int,itemName varchar(10),price float);
+create a java program to insert the records into item table using preparedStatement
+and read the values at runtime(Scanner).
+
+solu:
+=====
+mysql> create table item(itemid int,
+    itemname varchar(10),
+    price decimal(10,2));
+
+package com.training.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+public class ExampleOnInsertUsingPreparedStatementUsingScanner {
+	
+	public static void main(String[] args) {
+
+		
+		try { 
+			Scanner sc= new Scanner(System.in);
+			
+			System.out.println("enter the item Id : ");
+			int id=sc.nextInt();
+			
+			System.out.println("enter the itemName ");
+			String itNm=sc.next();
+			
+			System.out.println("enter the item price");
+			float pr = sc.nextFloat();
+			
+			//load or register the driver
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			//define the connection url for mysql database;
+			String url="jdbc:mysql://localhost:3306/ust";
+			String userName="root";
+			String password="root";
+			
+			//establish the connection between the java class and database
+			Connection con =DriverManager.getConnection(url,userName,password);
+			
+			//creating PreparedStatment Object using con
+			String query="insert into item values(?,?,?)";
+			
+			PreparedStatement pstmt=con.prepareStatement(query);
+			
+		   pstmt.setInt(1,id);
+		   pstmt.setString(2,itNm);
+		    pstmt.setFloat(3,pr);
+		   
+			int iobj=pstmt.executeUpdate();
+			
+			if(iobj>0) {
+				System.out.println("Record is inserted using PreparedStatement");
+			}else {
+				System.out.println("Record is not inserted");
+			}
+			
+			pstmt.close();
+			con.close();
+			sc.close();
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+}
+
+Ex2:
+===
+Write a jdbc code to insert a record into employee table(empno,ename,sal)using Statement Object and
+ read the values at runtime(Scanner).
+
+sol:-
+----
+package com.training.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class ExampleOnInsertUsingStatementWithScanner {
+
+	public static void main(String[] args) {
+		
+		try {
+			
+			Scanner sc = new Scanner(System.in);
+			
+			System.out.println("Enter the Employee Id :");
+			int eid=sc.nextInt();
+			
+			System.out.println("Enter the Employee Name :");
+		    String en=sc.next();
+		    
+		    System.out.println("Enter the Employee Salary :");
+			float esal=sc.nextFloat();
+			
+			
+			//load or register the driver
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			
+			//define the connection url for mysql database;
+			String url="jdbc:mysql://localhost:3306/ust";
+			String userName="root";
+			String password="root";
+			
+			//establish the connection between the java class and database
+			Connection con =DriverManager.getConnection(url,userName,password);
+	
+			//creating statment object using con
+			Statement stmtObj=con.createStatement();
+			
+			//Execute the Queries
+			String query="insert into employee values("+eid+",'"+en+"',"+esal+")";
+			
+			int iobj=stmtObj.executeUpdate(query);
+			
+			if(iobj>0) {
+				System.out.println("Record is inserted Successfully");
+			}else {
+				System.out.println("Record is Not Inserted ");
+			}
+						
+			//close the objects
+			stmtObj.close();
+			con.close();
+			
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+	}
+
+}
+
+
+
+Ex3:
+---
+Write a jdbc code to insert a record into item table using Statement Object and read the values at runtime(Scanner).
+note:
+
+
+note:
+-----
+String qs ="insert into item values("+tid+",'"+tn+"',"+tp+")";
+
+
+sol:
+----
+public class ExampleOnInsertDynamicUsingStatement {
+ public static void main(String[] args) throws ClassNotFoundException, SQLException {
+	
+	 
+		
+		Scanner sobj = new Scanner(System.in);
+		System.out.println("Enter the item Id");
+		int tid =sobj.nextInt();
+		
+		System.out.println("Enter the item Name");
+		String tn =sobj.next();
+		
+		System.out.println("Enter the item Price");
+  	    double tp =sobj.nextDouble();
+		
+		
+	  //load or register the Driver
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		
+	  //Define the connect url,username, password.
+		
+		String url="jdbc:mysql://localhost:3306/cts";
+		String user="root";
+		String password ="root";
+		
+	 //Establish the connection between java program to database
+		Connection con =DriverManager.getConnection(url,user, password);
+		
+		Statement stmtobj =con.createStatement();
+		
+		String qs ="insert into item values("+tid+",'"+tn+"',"+tp+")";
+		
+		int i =stmtobj.executeUpdate(qs);
+		
+		if(i>0) {
+			System.out.println("record inserted successfully");
+		}else {
+			System.out.println("Insertion is failed...!");
+		}
+		
+		sobj.close();
+		stmtobj.close();
+		con.close();
+	  	 
+}
+}
+
+
+
+Ex4:
+====
+Write java program to update a record where deptno 40 from dept_1 
+using preparedStatement object and Scanner to read the values at runtime.
+
+(create table dept_1 as select * from dept;)
+
+note:
+-----
+40 Operations Boston -->old record
+
+update record to 
+
+40 research lucknow.
+
+sol:
+---
+package com.training.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+public class ExampleOnUpdate {
+	
+	public static void main(String[] args) {
+
+		
+		try { 
+			Scanner sc= new Scanner(System.in);
+			
+			System.out.println("enter the deptno to update");
+			int dno=sc.nextInt();
+			
+			System.out.println("enter the new deptName ");
+			String dna=sc.next();
+			
+			System.out.println("enter the new loc");
+			String dl=sc.next();
+			
+			//load or register the driver
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			//define the connection url for mysql database;
+			String url="jdbc:mysql://localhost:3306/ust";
+			String userName="root";
+			String password="root";
+			
+			//establish the connection between the java class and database
+			Connection con =DriverManager.getConnection(url,userName,password);
+			
+			//creating PreparedStatment Object using con
+			String query="update dept_1 set dname=?,loc=? where deptno=?";
+			
+			PreparedStatement pstmt=con.prepareStatement(query);
+			
+			pstmt.setString(1,dna);
+			pstmt.setString(2,dl);
+			pstmt.setInt(3,dno);
+			
+		   
+			int iobj=pstmt.executeUpdate();
+			
+			if(iobj>0) {
+				System.out.println("Record is updatd : "+iobj);
+			}else {
+				System.out.println("Record is not updated ");
+			}
+			
+			pstmt.close();
+			con.close();
+			sc.close();
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+}
+
+
+
+
+ResultSet:
+==========
+to execute select queries or to retreive the data we need to use ResultSet executeQuery() method.
+
+Statement stmt = con.createStatement();
+ResultSet rs = statement.executeQuery("select * from tablename [where]");
+
+or
+
+PreparedStatement pstmt = con.prepareStatement("select * from tablename [where]");
+ResutSet rs = pstmst.executeQuery();
+
+Once we get ResultSet object to check result set pointing  to records are not by using
+method : public boolean next() using while loop
+
+to retrieve the records row by row using column datatype of table:
+------------------------------------------------------------------
+using getXXX() methods
+
+Database columndatatype				convert java datatype
+
+int						getInt(int column_position) or getInt(String column_name)
+varchar						getString(int column_position) or getSrting(String column_name)
+decimal						getDouble(int column_position) or getDouble(String column_name)
+..........
+..........
+etc.
+
+note:
+-----
+if column datatype is not known then we need to use getString(int column_position) or getSrting(String column_name);
+
+
+
+Ex:
+===
+Write a java program(ExampleOnRetrieve) to retreive the records from dept table and
+display it on console using ResultSet executeQuery()(Statement).
+
+sol:
+----
+public class ExampleOnRetrieve {
+	public static void main(String[] args) throws ClassNotFoundException, SQLException {
+		
+		//load or register the driver.
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		
+		//Define the connection properties,url,username,password
+		String url="jdbc:mysql://localhost:3306/cts";
+		String user="root";
+		String password="root";
+		
+		//Establish the connection  between java program and database
+		
+		Connection con =DriverManager.getConnection(url, user, password);
+		
+		//Retrieve the records from dept table
+		String quString="select * from  dept";
+		
+		//creating statement Object
+		Statement stmtObj=con.createStatement();
+		
+		ResultSet rs=stmtObj.executeQuery(quString);
+		
+		System.out.println("Department Details are :");
+		
+		while(rs.next()) {
+			System.out.println("DEptno is : "+rs.getDouble(1));
+			System.out.println("DeptName is : "+rs.getString(2));
+			System.out.println("Loc is : "+rs.getString("loc"));
+			System.out.println("+++++=======+++++");
+		}
+			
+		rs.close();
+		stmtObj.close();
+		con.close();
+				
+	}
+}
+
+
+
+Ex:
+===
+write a java program(ExampleOnRetriev2) to retrieve the records from emp(empno,ename,sal) where
+deptno=20 and job='clerk' using prepared statement and display the records on console .
+using scanner class.
+
+sol:
+---
+public class ExampleOnRetrieve2 {
+
+	
+	public static void main(String[] args) throws ClassNotFoundException, SQLException {
+		
+		  Scanner sobj= new Scanner(System.in);
+		
+		  System.out.println("Enter the depno");
+		  int dn= sobj.nextInt();
+		
+		  System.out.println("Enter the JOb name ");
+		  String jb= sobj.next();
+		
+		
+		//load or register the driver.
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				
+				//Define the connection properties,url,username,password
+				String url="jdbc:mysql://localhost:3306/cts";
+				String user="root";
+				String password="root";
+				
+				//Establish the connection  between java program and database
+				
+				Connection con =DriverManager.getConnection(url, user, password);
+				
+				String quString="select empno,ename,sal from emp where deptno=? and job=?";
+				
+				PreparedStatement pstmt=con.prepareStatement(quString);
+				pstmt.setInt(1,dn);
+				pstmt.setString(2, jb);
+				
+				ResultSet rs =pstmt.executeQuery();
+				
+				System.out.println("Employee Details are :");
+				
+				while(rs.next()) {
+					
+					System.out.println("Employee Id is : "+rs.getString("empno"));
+					System.out.println("Employee Name is : "+rs.getString("ename"));
+					System.out.println("Employee Salary is : "+rs.getString("sal"));
+					System.out.println("====+++++++++++==========");
+				}
+				
+				sobj.close();
+				rs.close();
+				pstmt.close();
+				con.close();		
+	}
+}
+
+CallableStatement:
+------------------
+
+In order to execute the stored procedures/functions from database using jdbc we must follow the following steps:
+
+1. Create an object of CallableStatement by using the following method:
+Here, String represents a call for calling a stored procedure from database environment.
+
+2. Prepare a call either for a function or for a procedure which is residing in database.
+
+Syntax for calling a function:
+-------------------------------
+ {? = call <name of the function> (?,?,? .)} 
+
+For example:
+------------
+CallableStatement cs=con.prepareCall ( {? = call fun1 (?,?)} );
+
+The positional parameters numbering will always from left to right starting from 1. 
+
+In the above example the positional parameter-1 represents out parameter and 
+the positional parameter-2 and parameter-3 represents in parameters.
+
+Syntax for calling a procedure:
+---------------------------------
+ {call <name of the procedure> (?,?,? .)} 
+
+For example:
+------------
+CallableStatement cs=con.prepareCall ( {call fun1 (?,?,?,?,?)} );
+
+3. Specify which input parameters are by using the following generalized method:
+  Public void setXXX (int, XXX);
+
+For example:
+----------------
+cs.setInt (2, 10);
+
+4. Specify which output parameters are by using the following generalized method:
+
+java.sql.CallableStatement
+     |______>
+     |public void registerOutParameter(int,jdbc data type for equalent database data type);
+
+
+In jdbc we have a predefined class called java.sql.Types which contains various data types of
+jdbc which are equivalent to database data types.
+
+Java 			Jdbc 			Database
+----			-----			---------
+int 			INTEGER 		number
+String 			VARCHAR 		varchar2
+Short 			TINY INTEGER 		number
+Byte 			SMALL INTEGER 		number
+
+5. Execute the stored procedure by using the following method:
+
+public boolean execute();
+
+For example:
+-------------
+cs.execute ();
+
+6. Get the values of out parameters by using the following method:
+
+public XXX getXXX (int);
+
+Here, int represents position of out parameter. XXX represents fundamental data type or
+string or date.
+
+For example:
+-----------
+int x=cs.getInt (1);
+System.out.println (x);
+
+
+MySQL Stored Procedure:
+=========================
+A procedure (often called a stored procedure) is a collection of pre-compiled SQL statements stored inside the database. 
+It is a subroutine or a subprogram in the regular computing language. 
+A procedure always contains a name, parameter lists, and SQL statements. 
+We can invoke the procedures by using triggers, other procedures and applications such as Java, Python, PHP, etc.
+
+
+Example:
+------
+ For procedures and functions am using  mysql demo tables emp,dept:
+===================================================================
+1)create a procedure named as get_emp_details to display empno,ename,sal from emp where deptno 20;
+
+2)write a jdbc code to call the procedure using  CallableStatement and display the records using result set.
+
+sol:
+---
+
+a) delimiter //
+   create procedure getEmpDetails(in dno decimal)
+   begin
+    select empno,ename,sal from emp where deptno=dno;
+   end //
+
+b)
+
+package com.training.dao;
+
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class ExampleOnCalllingProcedure1 {
+  	
+	public static void main(String[] args) {
+	   
+		try { //load or register the driver
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			
+			//Define the connection url,username,password
+			String url="jdbc:mysql://localhost:3306/ex_db";
+			String uname="root";
+			String pwd="root";
+			
+			//establish connection between java class and database
+			
+			Connection con=DriverManager.getConnection(url, uname, pwd);
+			
+			//creating Object for callable statement to call a procedure
+			
+			String query="{call getEmpDetails(?)}";
+			
+			CallableStatement cstmt =con.prepareCall(query);
+			cstmt.setInt(1,20);
+			
+			//call the execute() or executeQuery();
+			
+			ResultSet rs =cstmt.executeQuery();
+			
+			while(rs.next()) {
+				System.out.println(rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3));
+			}
+			
+			cstmt.close();
+			con.close();			
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	      
+	   
+}
+}
+
+
+Example2:
+---------
+
+a) create a procedure named as getMaxSal,write a logic to get max sal from emp table where deptno 20;
+   note:- pass deptno as input parameter(in)
+          For max sal declare a output parameter(out)
+
+b) create a java class to call the procedure which takes input and output paramters get the maxsal
+   note:
+   ----
+   for out parameter
+   1)register the out parameter with types class using callable statment object
+   2) get the out parameter value from the Type class and display the maxSal on console
+
+
+sol:
+----
+
+   delimiter //
+    create procedure getMaxSal(in dno decimal,out mx integer)
+    begin
+    select max(sal) into mx from emp where deptno=dno;
+
+    end //
+
+
+
+
+Example 3:
+----------
+1)create a procedure named as addition to perform sum of two number 
+using two in parameters and one out parameter
+
+2)create a java class to call procedure addition and display sum value on console
+  note:
+  ----
+   set the input paramter values using scanner 
+    register the output parameter value (Types) once registered get the value from the registered parameter  
+
+sol:
+----
+delimiter //
+
+create procedure addition (in n1 int,in n2 int,out res int)
+begin
+
+set res=n1+n2;
+
+end //
+
+delimiter ;
+
+b)
+package com.training.dao;
+
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Scanner;
+
+public class ExampleOnCallingProcedure3 {
+	
+		public static void main(String[] args) {
+			   
+			//load or register the driver
+				try {
+					Scanner sc= new Scanner(System.in);	
+					System.out.println("enter the first value : ");
+					int n1=sc.nextInt();
+					
+					System.out.println("enter the Second value : ");
+					int n2=sc.nextInt();
+					
+					Class.forName("com.mysql.cj.jdbc.Driver");
+					//Define the connection url,username,password
+					String url="jdbc:mysql://localhost:3306/ust";
+					String uname="root";
+					String pwd="root";
+					
+					//establish connection between java class and database
+					
+					Connection con=DriverManager.getConnection(url, uname, pwd);
+					
+		     //creating a Callable statement Object to call a procedure
+					
+				String query="{call addition(?,?,?)}";
+		
+			 CallableStatement cstmt=con.prepareCall(query);
+		
+			//setting the positional parameter 1,2
+			 cstmt.setInt(1,n1);
+			 cstmt.setInt(2,n2);
+			 
+		   //registering the out parameter value at position 3
+					
+			cstmt.registerOutParameter(3,Types.INTEGER);	
+			
+			//call the procedure
+			
+		    cstmt.execute();
+					
+		// get the registerParameter output parameter at Position 3
+			 int sum=cstmt.getInt(3);
+			System.out.println("Sum of two numbers is  : "+sum);
+			 
+			
+			cstmt.close();
+			con.close();
+							
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+		
+		
+	}
+}
+
+ExampleOnCalling a funtionn from Mysql:
+-----------------------------------------
+a)create a function named as fun_addition which takes three parameters
+and perform sum of three numbers and return it
+
+b)create a java class to call a function(fun_addition) and display the sum value
+
+note:
+-----
+1)once function is called it will return a value.
+2)return value must be register using registerOutParameter(Types)
+3)get the registerOutParameter value and display it.
+
+sol:
+----
+
+delimiter //
+create function fun_addition(a int,b int,c int)
+returns int
+
+DETERMINISTIC
+
+begin
+
+return (a+b+c);
+
+end //
+
+delimiter ;
+
+
+
+b)
+package com.training.dao;
+
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Types;
+
+public class ExampleOnCallingFunction1 {
+	public static void main(String[] args) {
+
+		//load or register the driver
+		try {
+			
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			//Define the connection url,username,password
+			String url="jdbc:mysql://localhost:3306/ust";
+			String uname="root";
+			String pwd="root";
+			
+			//establish connection between java class and database
+			
+			Connection con=DriverManager.getConnection(url, uname, pwd);
+			
+			//creating callable statement object to call function
+			
+			String query="{ ?=call fun_addition(?,?,?)}";
+			
+			CallableStatement cstmt=con.prepareCall(query);
+			
+			//register the return value at position 1
+			
+			cstmt.registerOutParameter(1,Types.INTEGER);
+			
+			//set the values at position 2,3,4 (int)
+			cstmt.setInt(2,10);
+			cstmt.setInt(3, 40);
+			cstmt.setInt(4,30);
+			
+			//call the procedure
+			cstmt.execute();
+			
+			//get the value from registerParamter at position 1
+			
+			int res=cstmt.getInt(1);
+			
+			System.out.println("calling a function sum of three numbers is : "+res);
+			
+			cstmt.close();
+			con.close();
+			
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
+}
+
+ExampleOnFunctions:
+--------------------
+
+a) create a function named as getDeptName to return a varchar  (get the dname from dept table where deptno=20);
+
+b) Create a java class to call a function getDeptName and display the deptname
+  note:
+  -----
+   once function is called it will return value
+   return value must be registered by using registerOutParameter(1,Types.VARCHAR)
+   get the value from the registerParameter(String name= getString(1)) and display it
+
+sol:
+----
+delimiter //
+
+create function getDeptName(dno int)
+returns varchar(20)
+
+DETERMINISTIC
+
+begin
+
+declare v_dn varchar(20);
+
+select dname into v_dn from dept where deptno=dno;
+
+return v_dn;
+
+;
+
+end //
+
+b)
+public class ExampleOnCallingFunction1 {
+	public static void main(String[] args) {
+
+		//load or register the driver
+		try {
+			
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			//Define the connection url,username,password
+			String url="jdbc:mysql://localhost:3306/ust";
+			String uname="root";
+			String pwd="root";
+			
+			//establish connection between java class and database
+			
+			Connection con=DriverManager.getConnection(url, uname, pwd);
+			
+			//creating callable statement object to call function
+			
+			String query="{ ?=call getDeptName(?)}";
+			
+			CallableStatement cstmt=con.prepareCall(query);
+			
+			//register the return value at position at 1
+			cstmt.registerOutParameter(1,Types.VARCHAR);
+			cstmt.setInt(2,20);
+			
+			cstmt.execute();
+			
+			
+			String name = cstmt.getString(1);
+			System.out.println("Department Name at 20 : "+name);
+			
+		
+			cstmt.close();
+			con.close();
+			
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ResultSet:
+============
+1. An object of ResultSet allows us to retrieve the data by default only in 
+   forward direction but not in backward direction and random retrieval.
+
+2. Whenever we get the database data in ResultSet object which will be temporarily
+   disconnected from the database.
+
+3. ResultSet object does not allows us to perform any modifications on ResultSet object.
+
+4. Hence, the ResultSet is by default non-scrollable disconnected ResultSet.
+
+
+Scrollable ResultSet s and Updatable ResultSet s:
+=================================================
+Whenever we create an object of ResultSet by default, it allows us to retrieve in forward
+direction only and we cannot perform any modifications on ResultSet object. 
+
+Therefore, by default the ResultSet object is non-scrollable and non-updatable ResultSet.
+
+
+Scrollable ResultSet:
+-------------------------
+A scrollable ResultSet is one which allows us to retrieve the data in forward direction as well
+as backward direction but no updations are allowed. 
+
+In order to make the non-scrollable ResultSet as scrollable ResultSet as scrollable ResultSet
+we must use the following createStatement which is present in Connection interface.
+
+public Statement createStatement(int Type,int Mode);
+
+Type represents type of scrollability and Mode represents either read only or updatable. 
+
+The value of Type and value of Mode are present in ResultSet interface as constant data members and
+they are:
+
+
+int Type
+---------
+TYPE_FORWARD_ONLY     
+TYPE_SCROLL_INSENSITIVE 
+
+
+int Mode
+--------
+CONCUR_READ_ONLY 
+
+
+Example:
+========
+Statement st=con.createStatement (ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+ResultSet rs=st.executeQuery ( select * from tablename );
+
+
+The following methods which are available in ResultSet interface which allows us to 
+retrieve the data either in forward direction or in backward direction or in random retrieval:
+
+public boolean next ();  
+public void beforeFirst ();  
+public boolean isFirst ();  
+public void first ();  
+public boolean isBeforeFirst (); 
+public boolean previous ();  
+public void afterLast ();  
+public boolean isLast ();  
+public void last ();  
+public boolean isAfterLast ();  
+public void absolute (int); 
+public void relative (int); 
+
+
+Example:
+=======
+Write a java program(ExampleOnRetrieve3) to retreive the records from dept table and
+using scrollable resultset display the records in forword direction ,backword direction and random.
+uisng statment with Type=TYPE_SCROLL_INSENSITIV, mode=CONCUR_READ_ONLY ;
+
+sol:
+====
+
+public class ExampleOnRetrieve3 {
+	
+public static void main(String[] args) throws ClassNotFoundException, SQLException {
+	
+	//load or register the driver.
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			
+			//Define the connection properties,url,username,password
+			String url="jdbc:mysql://localhost:3306/cts";
+			String user="root";
+			String password="root";
+			
+			//Establish the connection  between java program and database
+			
+			Connection con =DriverManager.getConnection(url, user, password);
+			
+			//Retrieve the records from dept table
+			String quString="select * from  dept";	
+			
+			//convert non-scrollable result set  to scrollable result set using type and mode
+			
+			Statement stmt=con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+			
+			ResultSet rs=stmt.executeQuery(quString); 
+			
+			System.out.println("Displaying the records in forward direction");
+			System.out.println("");
+			
+			System.out.println("Deptno  "+"  "+"Dname  "+" "+"Loc   ");
+			while(rs.next()) {
+				System.out.println(rs.getInt(1)+" "+rs.getString(2)+" "+rs.getString(3));
+			}
+			
+			System.out.println("=======================================");
+			System.out.println("Displaying the records in backward direction");
+			System.out.println("");
+			
+			System.out.println("Deptno  "+"  "+"Dname  "+" "+"Loc   ");
+			
+			while(rs.previous()) {
+				System.out.println(rs.getInt(1)+" "+rs.getString(2)+" "+rs.getString(3));
+			}
+			
+			System.out.println("+++++++++++");
+			rs.first();
+			System.out.println("First Record ");
+			System.out.println(rs.getInt(1)+" "+rs.getString(2)+" "+rs.getString(3));
+			
+			
+			System.out.println("+++++++++++");
+			rs.last();
+			System.out.println("Last Record ");
+			System.out.println(rs.getInt(1)+" "+rs.getString(2)+" "+rs.getString(3));
+			
+			
+			System.out.println("+++++++++++");
+			rs.absolute(3); //random
+			System.out.println("random record ");
+			System.out.println(rs.getInt(1)+" "+rs.getString(2)+" "+rs.getString(3));
+			
+			
+			
+	    rs.close();
+	    stmt.close();
+	    con.close();
+	
+	
+}}
+
+
+Updatable ResultSet:
+=====================
+Whenever we create a ResultSet object which never allows us to update the database
+through ResultSet object and it allows retrieving the data only in forward direction.
+
+Such type of ResultSet is known as non-updatable and non-scrollable ResultSet.
+
+In order to make the ResultSet object as updatable and scrollable we must use the following
+constants which are present in ResultSet interface.
+
+public Statement createStatement(int Type,int Mode);
+
+int Type
+--------
+TYPE_SCROLL_SENSITIVE
+
+
+int Mode
+--------
+CONCUR_UPDATABLE
+
+Example:
+--------
+Statement st=con.createStatement (ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+
+
+note:
+=====
+when update the data in the table using updatableResult object,
+the updatable table should contain primary key.
+
+
+1)insert
+=========
+moveToInsertRow();
+insertRow();
+
+
+2) update
+----------
+absolute();//place the cursor on the record to update
+updateRow();
+
+
+3)delete:
+=========
+
+absolute();//place the cursor on the record to delete
+deleteRow();
+
+
+Example:
+========
+Write a jdbc program(ExampleOnUpdatableResultSet) to retreive the records from d_dept table and
+update the table(insert,update,delete) d_dept using updatable ResulSet with 
+
+Type:
+-----
+TYPE_SCROLL_SENSITIVE
+
+Mode:
+------
+CONCUR_UPDATABLE
+
+using Statement Object
+
+
+sol:
+====
+public class ExampleOnUpdatableResultSet {
+
+	
+	public static void main(String[] args) throws ClassNotFoundException, SQLException {
+		
+		//load or register the driver.
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				
+				//Define the connection properties,url,username,password
+				String url="jdbc:mysql://localhost:3306/cts";
+				String user="root";
+				String password="root";
+				
+				//Establish the connection  between java program and database
+				
+				Connection con =DriverManager.getConnection(url, user, password); 
+				
+				//create the statement Object with Updatable Resultset using TYpe and Mode
+				
+			   Statement stmtObj=con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+			   
+			   String qString="select * from d_dept";
+			   
+			   ResultSet rs = stmtObj.executeQuery(qString);
+			   
+			   System.out.println("first Record");
+			   rs.first();
+			   System.out.println(rs.getInt(1)+" "+rs.getString(2)+" "+rs.getString("loc"));
+			   
+			   
+			   //insert a record into d_dept table using Updatable ResultSet
+			   
+		/*
+		 * rs.moveToInsertRow(); rs.updateInt("deptno", 60);
+		 * rs.updateString("dname","testing"); rs.updateString("loc","HYD");
+		 * 
+		 * rs.insertRow();
+		 * 
+		 * System.out.println("Record inserted using Updatable ResultSet");
+		 */
+			    
+			   
+			   //udpate the record in d_dept table using  updatable resultset
+			  //place the cursor on which record to udpate using rs.absolute(rowno)
+			   //update 50 record where DBMS-->Python and CHEN ==> MUMBAI
+			   
+		/*
+		 * rs.absolute(5); rs.updateString("dname","Python");
+		 * rs.updateString("loc","mumbai"); rs.updateRow();
+		 * 
+		 * System.out.println("Rcord is update on d_dept");
+		 * 
+		 */
+			//first place a cursor on which record to delete  using rs.absolute(rowno)
+			// delelte a record from d_dept where deptno=60
+			   
+			   rs.absolute(6);
+			   rs.deleteRow();
+			   
+			   System.out.println("record is deleted");
+			   
+			   rs.close();
+			   stmtObj.close();
+			   con.close();
+		
+		
+			
+	}
+}
+
+
+
+
+
+MetaData:
+=========
+The Data about data is called metadata
+
+Database Metadata.
+------------------
+
+The data about the database(driverName,version,databasename)
+
+Ex:
+---
+con.geMetaData();
+
+Ex:
+---
+package com.training.dao;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class ExampleOnDataBaseMetaData {
+
+	public static void main(String[] args) {
+		
+		try {
+			//load or register the driver
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			
+			//Define the connection url,username,password
+			String url="jdbc:mysql://localhost:3306/ust";
+			String uname="root";
+			String pwd="root";
+			
+			//Establish the connection between Java class and Database
+			Connection con=DriverManager.getConnection(url, uname, pwd);
+			
+			//get the databasemeta data object
+			DatabaseMetaData dbmd=con.getMetaData();
+			
+			System.out.println("database major version : "+dbmd.getDatabaseMajorVersion());
+			System.out.println("database productName : "+dbmd.getDatabaseProductName());
+			System.out.println("database productVersion : "+dbmd.getDatabaseProductVersion());
+			System.out.println("database Url : "+dbmd.getURL());
+			System.out.println("database UserName : "+dbmd.getUserName());
+	
+			
+			con.close();
+					
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}
+}
+
+
+ResultSet Metadata
+-----------------
+The data about the table structure or definition .(count no of columns,colum_nname,column_datatype)
+
+ex:
+---
+rs.getMetadata();
+
+Ex:
+---
+package com.training.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class ExampleOnResultSetMetaData {
+
+	public static void main(String[] args) {
+		
+		try {
+			//load or register the driver
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			
+			//Define the connection url,username,password
+			String url="jdbc:mysql://localhost:3306/ust";
+			String uname="root";
+			String pwd="root";
+			
+			//Establish the connection between Java class and Database
+			Connection con=DriverManager.getConnection(url, uname, pwd);
+			
+			//creating the Statement Object executing the select Query
+			
+			Statement stmtObj=con.createStatement();
+			
+			String query="select * from dept";
+			
+			ResultSet rs=stmtObj.executeQuery(query);
+			
+			ResultSetMetaData rsmd =rs.getMetaData();
+			
+			System.out.println("no of columns : "+rsmd.getColumnCount());
+			System.out.println("From the database get the table column name and column data type");
+			for(int i=1;i<=rsmd.getColumnCount();i++) {
+				System.out.println(rsmd.getColumnName(i)+" "+rsmd.getColumnTypeName(i));
+			}
+		   
+			rs.close();
+			stmtObj.close();
+			con.close();
+					
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}
+
+
+Removing redundant lines(boiler plate code) from the Java Classes:
+-----------------------------------------------
+package com.training.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class DBUilts {
+
+	static Connection con=null;
+	
+	public static Connection getConnectionForMySQL() {
+		
+		try {
+			//load or register the driver
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			
+			//Define the url,username and Password
+			String url="jdbc:mysql://localhost:3306/ust";
+			String uname="root";
+			String pwd="root";
+			
+			//establish the connection between Java Class and Database
+			
+		  con=DriverManager.getConnection(url,uname,pwd);	
+					
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
+		return con;
+	}
+	
+	
+	public static void closeMySqlConnection() {
+		
+		try {
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+}
+
+
+
+
+
+executeBatch():
+================
+By using Statement and PreparedStatement object we can execute only one query(insert,update,execute) at a time 
+
+To execute Batch of sql queries (group of queries) as single unit by using Statment or PreparedStatement object with help
+executeBatch() method we can execute.
+
+note:
+-----
+1) first we need add group of sql queries to Statement or PreParedStatment object by using
+  addBatch()
+
+2) Once added the Queries we need to call executeBatch().
+
+
+Ex:
+---
+
+Write a java program to interact with database and execute
+group of sql queries(insert,update,delete) on customer table using statement .
+
+sol:
+----
+public class ExampleOnBatchQueries {
+
+public static void main(String[] args) throws ClassNotFoundException, SQLException {
+		
+		// load or register the Driver
+		Class.forName("com.mysql.cj.jdbc.Driver");
+
+		// Define connection url,username,password
+		String url = "jdbc:mysql://localhost:3306/cts";
+		String user = "root";
+		String password = "root";
+
+		// establish the connection between java program to database.
+		Connection con = DriverManager.getConnection(url, user, password);
+	
+		//createing group of queries
+		String n1="insert into customer values(1008,'eight','hyd')";
+		String n2="insert into customer values(1009,'nine','kerala')";
+		
+	//updateing record 1001 from smith -> to scott and boston-->bayarea
+		String u1="update customer set name='scott',address='bayarea' where id=1001";
+   //delete 1005 record from customer table
+		String d1="delete from customer where id=1005";
+
+		//creating statement object 
+		Statement  stmtObj = con.createStatement(); 
+		
+		//add all the group of queris into statement object		
+		stmtObj.addBatch(n1);
+		stmtObj.addBatch(n2);
+		stmtObj.addBatch(u1);
+		stmtObj.addBatch(d1);
+		
+		//execute the above queries by calling executeBatch()
+		
+		int i[]=stmtObj.executeBatch();
+		
+		System.out.println("group of quereis are executed");
+		
+		stmtObj.close();
+		con.close();
+	
+}
+}
+
+
+
+Ex:
+===
+Write a java program to interact with database and execute
+group of sql queries(insert) on customer table using PreParedStatement 
+
+sol:
+----
+public class ExampleOnBatchUsingPreparedStatement {
+
+public static void main(String[] args) throws ClassNotFoundException, SQLException {
+		
+		// load or register the Driver
+		Class.forName("com.mysql.cj.jdbc.Driver");
+
+		// Define connection url,username,password
+		String url = "jdbc:mysql://localhost:3306/cts";
+		String user = "root";
+		String password = "root";
+
+		// establish the connection between java program to database.
+		Connection con = DriverManager.getConnection(url, user, password);
+		
+		String n1= "insert into customer values(?,?,?)";
+		
+		PreparedStatement pstmt = con.prepareStatement(n1);
+		
+		pstmt.setInt(1,1110);
+		pstmt.setString(2,"eleven");
+		pstmt.setString(3,"boston");
+		
+		pstmt.addBatch();
+		
+		pstmt.setInt(1,1121);
+		pstmt.setString(2,"sita");
+		pstmt.setString(3,"hyd");
+		
+		pstmt.addBatch();
+		
+		pstmt.setInt(1,1122);
+		pstmt.setString(2,"pinak");
+		pstmt.setString(3,"mumbai");
+		
+		pstmt.addBatch();
+		
+		int[] i=pstmt.executeBatch();
+		
+		System.out.println("multiple records are  inserted using preparedStatment");
+		
+		
+	
+}
+}
+
+
+
+
+
