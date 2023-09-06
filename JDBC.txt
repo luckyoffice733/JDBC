@@ -168,7 +168,7 @@ public class ExampleOnInsertUsingStatementObject1 {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			
 			//define the connection url for mysql database;
-			String url="jdbc:mysql://localhost:3306/ust";
+			String url="jdbc:mysql://localhost:3306/training";
 			String userName="root";
 			String password="root";
 			
@@ -232,7 +232,7 @@ public class ExampleOnInsert {
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		
 		//Define connection url,username,password	
-		String url="jdbc:mysql://localhost:3306/ust";
+		String url="jdbc:mysql://localhost:3306/training";
 		String user="root";
 		String password="root";
 		
@@ -334,7 +334,7 @@ public class ExampleOnInsertUsingPreparedStatement1 {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			//define the connection url for mysql database;
-			String url="jdbc:mysql://localhost:3306/ust";
+			String url="jdbc:mysql://localhost:3306/training";
 			String userName="root";
 			String password="root";
 			
@@ -413,7 +413,7 @@ public class ExampleOnInsertUsingPreparedStatementUsingScanner {
 			//load or register the driver
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			//define the connection url for mysql database;
-			String url="jdbc:mysql://localhost:3306/ust";
+			String url="jdbc:mysql://localhost:3306/training";
 			String userName="root";
 			String password="root";
 			
@@ -489,7 +489,7 @@ public class ExampleOnInsertUsingStatementWithScanner {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			
 			//define the connection url for mysql database;
-			String url="jdbc:mysql://localhost:3306/ust";
+			String url="jdbc:mysql://localhost:3306/training";
 			String userName="root";
 			String password="root";
 			
@@ -530,13 +530,10 @@ public class ExampleOnInsertUsingStatementWithScanner {
 
 }
 
-
-
 Ex3:
 ---
 Write a jdbc code to insert a record into item table using Statement Object and read the values at runtime(Scanner).
 note:
-
 
 note:
 -----
@@ -639,7 +636,7 @@ public class ExampleOnUpdate {
 			//load or register the driver
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			//define the connection url for mysql database;
-			String url="jdbc:mysql://localhost:3306/ust";
+			String url="jdbc:mysql://localhost:3306/training";
 			String userName="root";
 			String password="root";
 			
@@ -1103,10 +1100,9 @@ public class ExampleOnCallingProcedure3 {
 				
 		
 		
-	}
-}
+	}}
 
-ExampleOnCalling a funtionn from Mysql:
+Calling a funtion from Mysql Using JDBC:
 -----------------------------------------
 a)create a function named as fun_addition which takes three parameters
 and perform sum of three numbers and return it
@@ -1178,7 +1174,7 @@ public class ExampleOnCallingFunction1 {
 			cstmt.setInt(3, 40);
 			cstmt.setInt(4,30);
 			
-			//call the procedure
+			//call the function
 			cstmt.execute();
 			
 			//get the value from registerParamter at position 1
@@ -1232,10 +1228,9 @@ select dname into v_dn from dept where deptno=dno;
 
 return v_dn;
 
-;
-
 end //
 
+delimiter;
 b)
 public class ExampleOnCallingFunction1 {
 	public static void main(String[] args) {
@@ -1259,7 +1254,7 @@ public class ExampleOnCallingFunction1 {
 			
 			CallableStatement cstmt=con.prepareCall(query);
 			
-			//register the return value at position at 1
+			//register the return value at position 1
 			cstmt.registerOutParameter(1,Types.VARCHAR);
 			cstmt.setInt(2,20);
 			
@@ -1287,23 +1282,6 @@ public class ExampleOnCallingFunction1 {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ResultSet:
 ============
 1. An object of ResultSet allows us to retrieve the data by default only in 
@@ -1314,10 +1292,10 @@ ResultSet:
 
 3. ResultSet object does not allows us to perform any modifications on ResultSet object.
 
-4. Hence, the ResultSet is by default non-scrollable disconnected ResultSet.
+4. Hence, the ResultSet is by default non-scrollable/ disconnected ResultSet.
 
 
-Scrollable ResultSet s and Updatable ResultSet s:
+Scrollable ResultSet s and Updatable ResultSet :
 =================================================
 Whenever we create an object of ResultSet by default, it allows us to retrieve in forward
 direction only and we cannot perform any modifications on ResultSet object. 
@@ -1393,7 +1371,7 @@ public static void main(String[] args) throws ClassNotFoundException, SQLExcepti
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			
 			//Define the connection properties,url,username,password
-			String url="jdbc:mysql://localhost:3306/cts";
+			String url="jdbc:mysql://localhost:3306/training";
 			String user="root";
 			String password="root";
 			
@@ -1459,7 +1437,6 @@ Updatable ResultSet:
 =====================
 Whenever we create a ResultSet object which never allows us to update the database
 through ResultSet object and it allows retrieving the data only in forward direction.
-
 Such type of ResultSet is known as non-updatable and non-scrollable ResultSet.
 
 In order to make the ResultSet object as updatable and scrollable we must use the following
@@ -1492,7 +1469,6 @@ the updatable table should contain primary key.
 moveToInsertRow();
 insertRow();
 
-
 2) update
 ----------
 absolute();//place the cursor on the record to update
@@ -1501,7 +1477,6 @@ updateRow();
 
 3)delete:
 =========
-
 absolute();//place the cursor on the record to delete
 deleteRow();
 
@@ -1533,7 +1508,7 @@ public class ExampleOnUpdatableResultSet {
 				Class.forName("com.mysql.cj.jdbc.Driver");
 				
 				//Define the connection properties,url,username,password
-				String url="jdbc:mysql://localhost:3306/cts";
+				String url="jdbc:mysql://localhost:3306/training";
 				String user="root";
 				String password="root";
 				
@@ -1571,7 +1546,8 @@ public class ExampleOnUpdatableResultSet {
 			   //update 50 record where DBMS-->Python and CHEN ==> MUMBAI
 			   
 		/*
-		 * rs.absolute(5); rs.updateString("dname","Python");
+		 * rs.absolute(5);
+                   rs.updateString("dname","Python");
 		 * rs.updateString("loc","mumbai"); rs.updateRow();
 		 * 
 		 * System.out.println("Rcord is update on d_dept");
@@ -1780,9 +1756,12 @@ public class DBUilts {
 	
 }
 
-
-
-
+Assignment:
+===========
+MetaData
+DatabaseMethod
+ResultMetaData
+executeBatch
 
 executeBatch():
 ================
@@ -1801,7 +1780,6 @@ note:
 
 Ex:
 ---
-
 Write a java program to interact with database and execute
 group of sql queries(insert,update,delete) on customer table using statement .
 
@@ -1815,7 +1793,7 @@ public static void main(String[] args) throws ClassNotFoundException, SQLExcepti
 		Class.forName("com.mysql.cj.jdbc.Driver");
 
 		// Define connection url,username,password
-		String url = "jdbc:mysql://localhost:3306/cts";
+		String url = "jdbc:mysql://localhost:3306/training";
 		String user = "root";
 		String password = "root";
 
@@ -1869,7 +1847,7 @@ public static void main(String[] args) throws ClassNotFoundException, SQLExcepti
 		Class.forName("com.mysql.cj.jdbc.Driver");
 
 		// Define connection url,username,password
-		String url = "jdbc:mysql://localhost:3306/cts";
+		String url = "jdbc:mysql://localhost:3306/training";
 		String user = "root";
 		String password = "root";
 
