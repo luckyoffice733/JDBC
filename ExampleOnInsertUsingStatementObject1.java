@@ -10,22 +10,12 @@ public class ExampleOnInsertUsingStatementObject1 {
 	public static void main(String[] args) {
 		
 		try {
-			//load or register the driver for Mysql
-			Class.forName("com.mysql.cj.jdbc.Driver");
 			
-		   //Define the connection URl(Where database is located)
-			String url="jdbc:mysql://localhost:3306/training";
-			String userName="root";
-			String password="root";
-			
-		  //Establish the connection between the java program and the database(mysql)
-			Connection con=DriverManager.getConnection(url, userName, password);
-			
-		  //Get the Statement Object to execute the execute the queries.
-			
+		
+		  Connection con= DBUtills.getJdbcMySqlConn();
 		   Statement stmt= con.createStatement();
 		   
-		  String  queryInsert="insert into employee values(1015,'martin',6000)";
+		  String  queryInsert="insert into employee values(1016,'Allen',7000)";
 		   
 		  int iobj= stmt.executeUpdate(queryInsert);
 		  
@@ -40,9 +30,7 @@ public class ExampleOnInsertUsingStatementObject1 {
 		  stmt.close();
 		  con.close();
 			
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
